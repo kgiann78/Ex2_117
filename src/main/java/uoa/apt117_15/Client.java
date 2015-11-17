@@ -9,7 +9,6 @@ public class Client implements Runnable {
     }
 
     public void run() {
-        Random random = new Random();
         for (int i=0; i < 100; i++) {
             stack.push(i);
             System.out.println("[" + Thread.currentThread().getId() + "] " + stack.top());
