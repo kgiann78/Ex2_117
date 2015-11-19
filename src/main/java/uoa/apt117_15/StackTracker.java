@@ -1,7 +1,10 @@
 package uoa.apt117_15;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class StackTracker {
@@ -24,11 +27,13 @@ public class StackTracker {
     @Around("pointcutInPush(element)")
     public void aroundPush(ProceedingJoinPoint point, int element) {
         try {
-            while (pushInUse || popInUse || topInUse) {
-                Thread.sleep(100);
+             synchronized(this) {
+                while (pushInUse || popInUse || topInUse) {
+                    this.wait();
+                }
+                pushInUse = true;
+                point.proceed();
             }
-            pushInUse = true;
-            point.proceed();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -37,11 +42,14 @@ public class StackTracker {
     @Around("pointcutInPop()")
     public int aroundPop(ProceedingJoinPoint point) {
         try {
-            while (pushInUse || popInUse || topInUse) {
-                Thread.sleep(100);
+            synchronized (this) {
+                while (pushInUse || popInUse || topInUse) {
+                    this.wait();
+                }
+
+                popInUse = true;
+                return Integer.parseInt(point.proceed().toString());
             }
-            popInUse = true;
-            return Integer.parseInt(point.proceed().toString());
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -51,11 +59,13 @@ public class StackTracker {
     @Around("pointcutInTop()")
     public int aroundTop(ProceedingJoinPoint point) {
         try {
-            while (pushInUse || popInUse) {
-                Thread.sleep(100);
+            synchronized (this) {
+                while (pushInUse || popInUse) {
+                    this.wait();
+                }
+                topInUse = true;
+                return Integer.parseInt(point.proceed().toString());
             }
-            topInUse = true;
-            return Integer.parseInt(point.proceed().toString());
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -63,20 +73,23 @@ public class StackTracker {
     }
 
     @After("pointcutInPush(int)")
-    public void afterPush() {
+    synchronized public void afterPush() {
         if (pushInUse)
             pushInUse = false;
+        notifyAll();
     }
 
     @After("call(int pop())")
-    public void afterPop() {
+    synchronized public void afterPop() {
         if (popInUse)
             popInUse = false;
+        notifyAll();
     }
 
     @After("call(int top())")
-    public void afterTop() {
+    synchronized public void afterTop() {
         if (topInUse)
             topInUse = false;
+        notifyAll();
     }
 }
