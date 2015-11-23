@@ -10,6 +10,9 @@ public class Topper implements Runnable {
     }
 
     public void run() {
-        System.out.println("Top\t\t[" + Thread.currentThread().getId() + "]\t" + stack.top());
+        for (int i = 0; i < 100; i++) {
+            if (stack.size() > 0)
+                System.out.println("Top\t\t[" + Thread.currentThread().getId() + "]\t" + stack.top());
+        }
     }
 }

@@ -52,8 +52,8 @@ public class StackTracker {
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
+            return -1;
         }
-        return -1;
     }
 
     @Around("pointcutInTop()")
@@ -68,8 +68,8 @@ public class StackTracker {
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
+            return -1;
         }
-        return -1;
     }
 
     @After("pointcutInPush(int)")

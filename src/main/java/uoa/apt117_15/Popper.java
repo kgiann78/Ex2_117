@@ -1,5 +1,4 @@
 package uoa.apt117_15;
-import java.util.Random;
 
 public class Popper implements Runnable {
     CustomStack stack;
@@ -9,6 +8,12 @@ public class Popper implements Runnable {
     }
 
     public void run() {
-        System.out.println("Pop\t\t[" + Thread.currentThread().getId() + "]\t" + stack.pop());
+        for (int i = 0; i < 100; i++) {
+            if (stack.size() > 0)
+                System.out.println("Pop\t\t[" + Thread.currentThread().getId() + "]\t" + stack.pop() + "\tStack size " + stack.size());
+        }
+        synchronized (this) {
+            notify();
+        }
     }
 }
