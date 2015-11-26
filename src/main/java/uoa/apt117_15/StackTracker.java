@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
-@Aspect
+@Aspect("pertarget(target(uoa.apt117_15.CustomStack))")
 public class StackTracker {
     boolean pushInUse = false;
     boolean popInUse = false;

@@ -12,3 +12,4 @@ Exercise 2 for CS course 117 Advanced Programming Techniques
 * Download
 * Build with maven "mvn clean aspectj:compile"
 * All dependencies are described in the pom file
+
